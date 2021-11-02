@@ -5,5 +5,6 @@ export interface UserModel {
 
 export interface UserState {
   users: Array<UserModel>;
+  isLoading: Boolean;
   error: String;
 }

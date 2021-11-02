@@ -12,6 +12,7 @@ const initialState: UserState = {
     { id: 1, name: "Fake" },
     { id: 2, name: "Data" },
   ],
+  isLoading: false,
   error: "",
 };
 
@@ -52,22 +53,44 @@ const deleteUser = createAsyncThunk(
 );
 
 const extraReducers = (builder: ActionReducerMapBuilder<UserState>) => {
+  //load users
+  builder.addCase(loadUsers.pending, (state: any, action) => {
+    state.isLoading = true;
+  });
   builder.addCase(loadUsers.fulfilled, (state: any, action) => {
+    state.isLoading = false;
     state.users = action.payload;
   });
-  builder.addCase(addUser.fulfilled, (state: any, action) => {
-    state.users = [...state.users, action.payload];
-  });
-  builder.addCase(addUser.rejected, (state: any, action) => {
+  builder.addCase(loadUsers.rejected, (state: any, action) => {
+    state.isLoading = false;
     state.error = action.payload;
   });
 
+  //add user
+  builder.addCase(addUser.pending, (state: any, action) => {
+    state.isLoading = true;
+  });
+  builder.addCase(addUser.fulfilled, (state: any, action) => {
+    state.isLoading = false;
+    state.users = [...state.users, action.payload];
+  });
+  builder.addCase(addUser.rejected, (state: any, action) => {
+    state.isLoading = false;
+    state.error = action.payload;
+  });
+
+  //delete user
+  builder.addCase(deleteUser.pending, (state: any, action) => {
+    state.isLoading = true;
+  });
   builder.addCase(deleteUser.fulfilled, (state: any, action) => {
+    state.isLoading = false;
     state.users = state.users.filter(
       (user: any) => user.id !== action.meta.arg
     );
   });
   builder.addCase(deleteUser.rejected, (state: any, action) => {
+    state.isLoading = false;
     state.error = action.payload;
   });
 };
