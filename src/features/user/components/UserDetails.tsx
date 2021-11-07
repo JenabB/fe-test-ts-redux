@@ -4,11 +4,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectUsers } from "../UserSelectors";
 import { actions } from "../UserSlice";
 
-import { Table, TableBody, TableHead, TableRow, Button } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableRow,
+  Button,
+  Stack,
+} from "@mui/material";
 
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 
 import AddUserModal from "./AddUserModal";
+import EditUserModal from "./EditUserModal";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -72,12 +80,15 @@ const UserDetails: FC = () => {
                 </StyledTableCell>
                 <StyledTableCell align="right">{row.name}</StyledTableCell>
                 <StyledTableCell align="right">
-                  <Button
-                    color="error"
-                    onClick={() => handleDeleteUser(row.id)}
-                  >
-                    delete
-                  </Button>
+                  <Stack direction="row" justifyContent="flex-end">
+                    <EditUserModal userId={row.id} />
+                    <Button
+                      color="error"
+                      onClick={() => handleDeleteUser(row.id)}
+                    >
+                      delete
+                    </Button>
+                  </Stack>
                 </StyledTableCell>
               </StyledTableRow>
             ))}

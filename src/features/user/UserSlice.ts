@@ -40,6 +40,21 @@ const addUser = createAsyncThunk(
   }
 );
 
+const editUser = createAsyncThunk(
+  "users/editUser",
+  async (user: any, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3010/users/${user.id}`,
+        user
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const deleteUser = createAsyncThunk(
   "users/deleteUser",
   async (id: any, { rejectWithValue }) => {
@@ -79,6 +94,27 @@ const extraReducers = (builder: ActionReducerMapBuilder<UserState>) => {
     state.error = action.payload;
   });
 
+  //edit user
+  builder.addCase(editUser.pending, (state: any, action) => {
+    state.isLoading = true;
+  });
+
+  builder.addCase(editUser.fulfilled, (state: any, action) => {
+    state.isLoading = false;
+    state.users = state.users.map((user: any) => {
+      if (user.id === action.payload.id) {
+        return action.payload;
+      }
+
+      return user;
+    });
+  });
+
+  builder.addCase(editUser.rejected, (state: any, action) => {
+    state.isLoading = false;
+    state.error = action.payload;
+  });
+
   //delete user
   builder.addCase(deleteUser.pending, (state: any, action) => {
     state.isLoading = true;
@@ -102,6 +138,12 @@ const userSlice: any = createSlice({
   extraReducers,
 });
 
-export const actions = { loadUsers, addUser, deleteUser, ...userSlice.actions };
+export const actions = {
+  loadUsers,
+  addUser,
+  editUser,
+  deleteUser,
+  ...userSlice.actions,
+};
 
 export default userSlice.reducer;
